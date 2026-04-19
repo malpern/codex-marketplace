@@ -7,6 +7,9 @@ plugin_dir="$root/plugins/voxclaw"
 manifest="$plugin_dir/.codex-plugin/plugin.json"
 marketplace="$root/marketplace.json"
 helper="$plugin_dir/scripts/voxclaw-say"
+claude_marketplace="$root/.claude-plugin/marketplace.json"
+claude_plugin_manifest="$plugin_dir/.claude-plugin/plugin.json"
+claude_bin="$plugin_dir/bin/voxclaw-say"
 
 require_file() {
   local path="$1"
@@ -18,19 +21,28 @@ require_file() {
 
 require_file "$manifest"
 require_file "$marketplace"
+require_file "$claude_marketplace"
+require_file "$claude_plugin_manifest"
 require_file "$helper"
+require_file "$claude_bin"
 
-python3 - <<'PY' "$manifest" "$marketplace"
+python3 - <<'PY' "$manifest" "$marketplace" "$claude_marketplace" "$claude_plugin_manifest"
 import json
 import sys
 
-manifest_path, marketplace_path = sys.argv[1], sys.argv[2]
+manifest_path, marketplace_path, claude_marketplace_path, claude_plugin_manifest_path = sys.argv[1:5]
 
 with open(manifest_path, "r", encoding="utf-8") as f:
     manifest = json.load(f)
 
 with open(marketplace_path, "r", encoding="utf-8") as f:
     marketplace = json.load(f)
+
+with open(claude_marketplace_path, "r", encoding="utf-8") as f:
+    claude_marketplace = json.load(f)
+
+with open(claude_plugin_manifest_path, "r", encoding="utf-8") as f:
+    claude_plugin_manifest = json.load(f)
 
 assert manifest["name"] == "voxclaw"
 assert manifest["version"] == "0.1.0"
@@ -44,8 +56,22 @@ assert entry["source"]["path"] == "./plugins/voxclaw"
 assert entry["policy"]["installation"] == "AVAILABLE"
 assert entry["policy"]["authentication"] == "ON_INSTALL"
 
-print("ok: manifest and marketplace")
+assert claude_marketplace["name"] == "malpern-marketplace"
+claude_entry = next((p for p in claude_marketplace["plugins"] if p["name"] == "voxclaw"), None)
+assert claude_entry is not None
+assert claude_entry["version"] == "0.1.0"
+assert claude_entry["source"] == "./plugins/voxclaw"
+assert claude_entry["strict"] is True
+assert claude_plugin_manifest["name"] == "voxclaw"
+assert claude_plugin_manifest["homepage"] == "https://voxclaw.com/"
+
+print("ok: codex and claude manifests")
 PY
+
+if command -v claude >/dev/null 2>&1; then
+  claude plugin validate "$root" >/dev/null
+  echo "ok: claude plugin validate"
+fi
 
 "$helper" --health
 "$helper" "VoxClaw plugin smoke test successful."

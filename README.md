@@ -12,13 +12,28 @@ Website: [voxclaw.com](https://voxclaw.com/)
 
 - `voxclaw`: voice output for Codex through the VoxClaw macOS app, local CLI, or local HTTP listener
 
+## Install
+
+Codex:
+
+```bash
+codex marketplace add malpern/codex-marketplace
+```
+
+Claude Code:
+
+```bash
+claude plugin marketplace add malpern/codex-marketplace
+```
+
 ## Repo boundary
 
 Use this repository for:
 
 - Codex marketplace metadata
+- Claude Code marketplace metadata
 - plugin packaging
-- Codex install docs
+- install docs for agent runtimes
 
 Use [`malpern/VoxClaw`](https://github.com/malpern/VoxClaw) for:
 
@@ -37,13 +52,26 @@ codex marketplace add malpern/codex-marketplace
 
 Then install the `voxclaw` plugin from that marketplace.
 
+In Claude Code:
+
+```bash
+/plugin marketplace add malpern/codex-marketplace
+/plugin install voxclaw@malpern-marketplace
+```
+
 ## Repository layout
 
 ```text
 marketplace.json
+.claude-plugin/
+  marketplace.json
 plugins/
   voxclaw/
+    .claude-plugin/plugin.json
     .codex-plugin/plugin.json
+    agents/
+    bin/
+    commands/
     skills/
     scripts/
     README.md

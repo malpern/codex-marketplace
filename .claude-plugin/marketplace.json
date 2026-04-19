@@ -1,0 +1,25 @@
+{
+  "name": "malpern-marketplace",
+  "owner": {
+    "name": "Michael Alpern",
+    "email": "michael@voxclaw.com"
+  },
+  "metadata": {
+    "description": "Voice and workflow plugins for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "voxclaw",
+      "description": "Speak Claude Code updates aloud through the VoxClaw macOS app, CLI, or local HTTP listener.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Michael Alpern",
+        "url": "https://github.com/malpern"
+      },
+      "source": "./plugins/voxclaw",
+      "category": "productivity",
+      "tags": ["voice", "speech", "tts", "macos", "audio"],
+      "strict": true
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 Installable Codex plugin for using VoxClaw as a voice output layer.
 
+This same plugin directory also ships a Claude Code plugin manifest, slash commands, a subagent, and a PATH wrapper for `voxclaw-say`.
+
 This plugin packages a reusable skill so Codex can:
 
 - send text to a running VoxClaw listener over HTTP
@@ -14,6 +16,21 @@ The packaged skill is derived from the main VoxClaw project:
 [VoxClaw SKILL.md](https://github.com/malpern/VoxClaw/blob/main/SKILL.md).
 
 The plugin manifest in this marketplace follows the richer field set documented in OpenAI's Codex plugin build guide, including publisher metadata and install-surface `interface` fields.
+
+## Runtime surfaces
+
+Codex:
+
+- skill-first workflow
+- shared helper script
+- marketplace installation through `codex marketplace add`
+
+Claude Code:
+
+- `.claude-plugin/plugin.json`
+- slash commands such as `/voxclaw:say` and `/voxclaw:announce-tests`
+- `spoken-update` subagent
+- `voxclaw-say` exposed on `PATH` through `bin/`
 
 ## Helper script
 
@@ -44,6 +61,14 @@ printf '%s\n' "Task complete. Tests passed." | plugins/voxclaw/scripts/voxclaw-s
 - `voxclaw`: general voice output
 - `voxclaw-read-task-summary`: speak a short completion summary
 - `voxclaw-read-test-failures`: speak a short failure summary
+
+## Claude Code features
+
+- `/voxclaw:say`
+- `/voxclaw:status`
+- `/voxclaw:announce-tests`
+- `spoken-update` agent
+- `voxclaw-say` available as a bare command while the plugin is enabled
 
 ## Demo and verification
 

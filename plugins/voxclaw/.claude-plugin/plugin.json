@@ -1,0 +1,12 @@
+{
+  "name": "voxclaw",
+  "description": "Voice output for Claude Code through the VoxClaw macOS app, local CLI, and local HTTP listener.",
+  "author": {
+    "name": "Michael Alpern",
+    "url": "https://github.com/malpern"
+  },
+  "homepage": "https://voxclaw.com/",
+  "repository": "https://github.com/malpern/VoxClaw",
+  "license": "MIT",
+  "keywords": ["voice", "speech", "tts", "macos", "audio"]
+}
