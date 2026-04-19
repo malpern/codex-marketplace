@@ -4,9 +4,28 @@ Installable Codex plugins published by Michael Alpern.
 
 This repository is a standalone Codex marketplace so users can add one remote source and install VoxClaw without depending on the internal layout of the main app repository.
 
+The main VoxClaw app, screenshots, releases, and website-linked product docs live in [malpern/VoxClaw](https://github.com/malpern/VoxClaw).
+
+Website: [voxclaw.com](https://voxclaw.com/)
+
 ## Included plugins
 
 - `voxclaw`: voice output for Codex through the VoxClaw macOS app, local CLI, or local HTTP listener
+
+## Repo boundary
+
+Use this repository for:
+
+- Codex marketplace metadata
+- plugin packaging
+- Codex install docs
+
+Use [`malpern/VoxClaw`](https://github.com/malpern/VoxClaw) for:
+
+- app source code
+- screenshots and product presentation
+- releases
+- broader end-user usage docs
 
 ## Intended install flow
 
