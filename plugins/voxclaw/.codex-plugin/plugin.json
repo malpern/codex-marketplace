@@ -1,0 +1,38 @@
+{
+  "name": "voxclaw",
+  "version": "0.1.0",
+  "description": "Give Codex a voice with the VoxClaw macOS app, CLI, and local HTTP listener.",
+  "author": {
+    "name": "Michael Alpern",
+    "url": "https://github.com/malpern"
+  },
+  "homepage": "https://github.com/malpern/VoxClaw",
+  "repository": "https://github.com/malpern/VoxClaw",
+  "license": "MIT",
+  "keywords": [
+    "voice",
+    "speech",
+    "tts",
+    "macos",
+    "audio"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "VoxClaw",
+    "shortDescription": "Speak Codex updates aloud.",
+    "longDescription": "Use the VoxClaw macOS app, CLI, or local listener to turn task summaries and failures into spoken audio.",
+    "developerName": "Michael Alpern",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://voxclaw.com/",
+    "privacyPolicyURL": "https://malpern.github.io/VoxClaw/privacy.html",
+    "defaultPrompt": [
+      "Use VoxClaw to read a short final task summary aloud.",
+      "Use VoxClaw to announce important test failures aloud."
+    ],
+    "brandColor": "#1F7A8C"
+  }
+}
