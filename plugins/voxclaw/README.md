@@ -1,76 +1,85 @@
 # VoxClaw Plugin
 
-Installable Codex plugin for using VoxClaw as a voice output layer.
+Give your coding agent a voice. This plugin packages VoxClaw integration for both **Claude Code** and **OpenAI Codex**.
 
-This same plugin directory also ships a Claude Code plugin manifest, slash commands, a subagent, and a PATH wrapper for `voxclaw-say`.
+## Quick setup
 
-This plugin packages a reusable skill so Codex can:
+### Claude Code (one command)
 
-- send text to a running VoxClaw listener over HTTP
-- use a stable helper script instead of duplicating curl logic
-- prefer a human-provided VoxClaw setup pointer when available
-- fall back to the local `voxclaw` CLI when appropriate
-- package workflow-specific speaking skills for coding sessions
+```bash
+plugins/voxclaw/setup-claude-code.sh
+```
 
-The packaged skill is derived from the main VoxClaw project:
-[VoxClaw SKILL.md](https://github.com/malpern/VoxClaw/blob/main/SKILL.md).
+This installs two hooks into `~/.claude/settings.json`:
+- **Stop** → speaks each assistant response aloud via VoxClaw
+- **UserPromptSubmit** → acknowledges the response (skips reading if you already replied)
 
-The plugin manifest in this marketplace follows the richer field set documented in OpenAI's Codex plugin build guide, including publisher metadata and install-surface `interface` fields.
+### Codex
 
-## Runtime surfaces
+Drop this plugin folder into your Codex workspace. The `.codex-plugin/plugin.json` manifest and bundled skills handle the rest.
 
-Codex:
+## What it does
 
-- skill-first workflow
-- shared helper script
-- marketplace installation through `codex marketplace add`
-
-Claude Code:
-
-- `.claude-plugin/plugin.json`
-- slash commands such as `/voxclaw:say` and `/voxclaw:announce-tests`
-- `spoken-update` subagent
-- `voxclaw-say` exposed on `PATH` through `bin/`
+- Every agent response is spoken aloud through the VoxClaw macOS app
+- Multiple agents get distinct voices (per-project voice binding)
+- A project badge shows which agent is speaking when multiple are active
+- If you respond to an agent while it's speaking, VoxClaw plays a click sound and moves on
+- Polite mode: waits for Zoom/Teams/FaceTime calls and mic-active transcription tools before speaking
 
 ## Helper script
 
-Use the plugin helper as the default integration surface:
-
 ```bash
-plugins/voxclaw/scripts/voxclaw-say "Build passed"
+plugins/voxclaw/scripts/voxclaw-say "Hello from the agent"
 plugins/voxclaw/scripts/voxclaw-say --health
-plugins/voxclaw/scripts/voxclaw-say --url http://192.168.1.50:4140/read "Hello from Codex"
+plugins/voxclaw/scripts/voxclaw-say --url http://192.168.1.50:4140/read "Hello"
+plugins/voxclaw/scripts/voxclaw-say --project-id /Users/me/myproject "Project update"
 plugins/voxclaw/scripts/voxclaw-say --voice nova --rate 1.2 "Heads up"
 ```
 
-Behavior:
-
-- If `--url` is provided, send to that `/read` endpoint.
-- Else if local listener health passes on `localhost:4140`, send over HTTP.
-- Else if the `voxclaw` CLI is installed, invoke the CLI directly.
-- Else fail with a clear error.
-
-The helper also accepts stdin:
+Reads from stdin too:
 
 ```bash
-printf '%s\n' "Task complete. Tests passed." | plugins/voxclaw/scripts/voxclaw-say
+printf '%s\n' "Task complete." | plugins/voxclaw/scripts/voxclaw-say
+```
+
+Resolution order: explicit `--url` → local listener on `localhost:4140` → local `voxclaw` CLI.
+
+## HTTP API
+
+```bash
+# Health check
+curl http://localhost:4140/status
+
+# Speak text
+curl -X POST http://localhost:4140/read \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"Hello","project_id":"/Users/me/proj","agent_id":"my-agent"}'
+
+# Acknowledge (user already read it, skip speaking)
+curl -X POST http://localhost:4140/ack \
+  -H 'Content-Type: application/json' \
+  -d '{"project_id":"/Users/me/proj"}'
 ```
 
 ## Included skills
 
-- `voxclaw`: general voice output
-- `voxclaw-read-task-summary`: speak a short completion summary
-- `voxclaw-read-test-failures`: speak a short failure summary
+- `voxclaw` — general voice output
+- `voxclaw-read-task-summary` — speak a short completion summary
+- `voxclaw-read-test-failures` — speak a short failure summary
 
-## Claude Code features
+## Files
 
-- `/voxclaw:say`
-- `/voxclaw:status`
-- `/voxclaw:announce-tests`
-- `spoken-update` agent
-- `voxclaw-say` available as a bare command while the plugin is enabled
-
-## Demo and verification
-
-- Demo guide: `plugins/voxclaw/DEMO.md`
-- Smoke test: `plugins/voxclaw/scripts/smoke-test`
+```
+plugins/voxclaw/
+  .codex-plugin/plugin.json    Codex plugin manifest
+  hooks/                       Claude Code hook scripts (bundled)
+    voxclaw-stop-speak.sh      Stop hook: speak assistant responses
+    voxclaw-ack.sh             UserPromptSubmit hook: ack on reply
+  scripts/
+    voxclaw-say                Helper script (curl + fallback)
+    smoke-test                 Quick verification
+  skills/                      Agent skills
+  setup-claude-code.sh         One-command Claude Code installer
+  README.md
+  DEMO.md
+```

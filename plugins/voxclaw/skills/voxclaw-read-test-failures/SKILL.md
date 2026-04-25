@@ -21,12 +21,6 @@ Use this skill when tests or builds fail and the user wants audible notification
 plugins/voxclaw/scripts/voxclaw-say "Tests failed. External playback controller tests are failing after the browser control changes."
 ```
 
-For a generated summary:
-
-```bash
-printf '%s\n' "Build failed. Swift compilation stopped in VoxClawApp because of a missing symbol." | plugins/voxclaw/scripts/voxclaw-say
-```
-
 ## Style
 
 - Do not read stack traces or long assertion bodies aloud by default.

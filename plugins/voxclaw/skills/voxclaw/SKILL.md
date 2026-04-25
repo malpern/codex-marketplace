@@ -7,7 +7,7 @@ metadata: {"requires":{"bins":["curl"]}}
 
 # VoxClaw
 
-Use this skill when the user wants audible output from Codex or another agent.
+Use this skill when the user wants audible output from an agent.
 
 VoxClaw runs on macOS as a menu bar app and can speak text through:
 
@@ -33,11 +33,12 @@ Never guess a `.local` hostname if the user already supplied a numeric LAN IP.
 Default to the helper script instead of open-coded `curl`:
 
 ```bash
-plugins/voxclaw/scripts/voxclaw-say "Hello from Codex"
+plugins/voxclaw/scripts/voxclaw-say "Hello from the agent"
 plugins/voxclaw/scripts/voxclaw-say --health
 plugins/voxclaw/scripts/voxclaw-say --url http://192.168.1.50:4140/read "Deployment complete"
 plugins/voxclaw/scripts/voxclaw-say --voice nova --rate 1.2 "Build failed"
 plugins/voxclaw/scripts/voxclaw-say --instructions "Read warmly" "Welcome back"
+plugins/voxclaw/scripts/voxclaw-say --project-id /Users/me/myproject "Update from my project"
 ```
 
 ## HTTP API
@@ -53,31 +54,25 @@ Speak text:
 ```bash
 curl -X POST http://localhost:4140/read \
   -H 'Content-Type: application/json' \
-  -d '{"text":"Hello from Codex"}'
+  -d '{"text":"Hello","project_id":"/Users/me/myproject","agent_id":"my-agent"}'
 ```
 
-Optional fields:
+Optional fields: `voice`, `rate`, `instructions`, `project_id`, `agent_id`.
 
-- `voice`
-- `rate`
-- `instructions`
+Acknowledge (user has read the response, skip speaking it):
+
+```bash
+curl -X POST http://localhost:4140/ack \
+  -H 'Content-Type: application/json' \
+  -d '{"project_id":"/Users/me/myproject"}'
+```
 
 ## CLI fallback
 
-When VoxClaw is installed locally and the task is on the same Mac, the CLI is often the simplest path:
-
 ```bash
-voxclaw "Hello from Codex"
-```
-
-Useful variants:
-
-```bash
+voxclaw "Hello"
 voxclaw --clipboard
-voxclaw --file article.txt
 voxclaw --voice nova "Build passed"
-voxclaw --rate 1.3 "Build passed"
-voxclaw --instructions "Read warmly" "Deployment complete"
 voxclaw --send "Hello"   # send to an already running listener
 voxclaw --status
 ```
@@ -87,9 +82,4 @@ voxclaw --status
 - Audio leads, visuals follow.
 - Do not trigger the overlay before audio is ready.
 - Keep spoken summaries concise unless the user asks for full narration.
-
-## Error handling
-
-- If `/status` fails locally, tell the user VoxClaw is not running or the listener is disabled.
-- If local status works but remote status fails, treat it as a network or firewall issue.
-- If the user has no OpenAI API key configured, Apple TTS still works.
+- Default to a spoken final summary after work completes.
